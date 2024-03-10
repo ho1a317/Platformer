@@ -14,6 +14,7 @@ public class PlayerControler : MonoBehaviour
     public float timeSmooth = 0.12f;
 
     private Rigidbody2D rb;
+    private Animator animator;
 
     [Space]
     [Header("Зашита от прохождения сквось стены")]
@@ -26,6 +27,7 @@ public class PlayerControler : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -37,6 +39,20 @@ public class PlayerControler : MonoBehaviour
     {
         float side = Controlers.controlers.inpyts.Main.Move.ReadValue<float>();
 
+        if (side != 0)
+        {
+            animator.SetBool("Run", true);
+        }
+        else
+        {
+            animator.SetBool("Run", false);
+        }
+
+        if (side != 0)
+        {
+          Flip(side);
+        }
+
         speed = Vector2.SmoothDamp(speed, new Vector2(side, 0) * speedWalk, ref acceleration, timeSmooth);
 
         MoveRya();
@@ -44,11 +60,30 @@ public class PlayerControler : MonoBehaviour
         transform.Translate(speed * Time.fixedDeltaTime);
     }
 
-    float dis;
-    private void OnDrawGizmos()
+    private void Flip(float said)
     {
-        Gizmos.DrawSphere((Vector2)transform.position + speed.normalized * dis , radius);
+        if (said > 0)
+        {
+            if (transform.localScale.x < 0)
+            {
+                Vector3 temp = transform.localScale;
+                temp.x *= -1;
+                transform.localScale = temp;
+            }
+            return;
+        }
+        if (said < 0)
+        {
+            if (transform.localScale.x > 0)
+            {
+                Vector3 temp = transform.localScale;
+                temp.x *= -1;
+                transform.localScale = temp;
+            }
+            return;
+        }
     }
+
     private void MoveRya()
     {
         if (!isEnable) return;
@@ -56,9 +91,8 @@ public class PlayerControler : MonoBehaviour
         float disRya = speed.magnitude;
 
         disRya = Mathf.Clamp(disRya, maxRay, minRay);
-        Debug.DrawRay(transform.position,speed.normalized * disRya ,Color.black);
-        dis = disRya;
-        if (Physics2D.CircleCast(transform.position, radius ,speed, disRya, layerForCheckLevle))
+
+        if (Physics2D.CircleCast(transform.position, radius, speed, disRya, layerForCheckLevle))
         {
             speed = Vector2.zero;
             acceleration = Vector2.zero;
@@ -76,18 +110,22 @@ public class PlayerControler : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         isGrounded = true;
+        animator.SetBool("Groynded", true);
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         isGrounded = false;
+        animator.SetBool("Groynded", false);
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
         isGrounded = true;
+        animator.SetBool("Groynded", true);
     }
 
     private void FixedUpdate()
     {
+        animator.SetFloat("YVelocity", rb.velocity.y);
         Move();
     }
 }
