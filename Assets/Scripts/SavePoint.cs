@@ -13,7 +13,7 @@ public class SavePoint : MonoBehaviour
 
     public void SetAktivateSevePoint(bool value)
     {
-        animator.SetBool("isAktivate", value);
+        animator.SetBool("isAktivat", value);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -21,7 +21,7 @@ public class SavePoint : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             ResPawn res = collision.GetComponent<ResPawn>();
-            if (res.savePoint = this) return;
+            if (res.savePoint == this) return;
 
             res.savePoint?.SetAktivateSevePoint(false);
 
