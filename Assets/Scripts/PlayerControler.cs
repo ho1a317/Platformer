@@ -15,6 +15,9 @@ public class PlayerControler : MonoBehaviour
 
     private Rigidbody2D rb;
     private Animator animator;
+    private new Collider2D collider;
+    private ResPawn res;
+    private Hp HP;
 
     [Space]
     [Header("Зашита от прохождения сквось стены")]
@@ -28,6 +31,9 @@ public class PlayerControler : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        collider = GetComponent<Collider2D>();
+        res = GetComponent<ResPawn>();
+        HP = GetComponent<Hp>();
     }
 
     private void Start()
@@ -127,5 +133,29 @@ public class PlayerControler : MonoBehaviour
     {
         animator.SetFloat("YVelocity", rb.velocity.y);
         Move();
+    }
+
+    public void StartDamage()
+    {
+        animator.SetBool("Damaging", true);
+    }
+
+    public void StartDed()
+    {
+        animator.SetBool("Ded", true);
+        collider.enabled = false;
+        rb.bodyType = RigidbodyType2D.Static;
+        Controlers.controlers.inpyts.Main.Disable();
+    }
+
+    public void EndDed()
+    {
+        animator.SetBool("Ded", false);
+        collider.enabled = true;
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        Controlers.controlers.inpyts.Main.Enable();
+
+       res?.ResPawnPlayer();
+       HP?.RecoveruHP();
     }
 }
