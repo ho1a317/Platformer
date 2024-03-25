@@ -7,6 +7,7 @@ public class PlayerControler : MonoBehaviour
     public float speedWalk = 10;
     public float jumpForse = 10;
     public bool isGrounded = true;
+    public VectorVelositi pos;
 
     private Vector2 speed;
     private Vector2 acceleration;
@@ -38,6 +39,7 @@ public class PlayerControler : MonoBehaviour
 
     private void Start()
     {
+        transform.position = pos.initialVelositi;
         Controlers.controlers.inpyts.Main.Jump.performed += _ => Jump();
     }
 
